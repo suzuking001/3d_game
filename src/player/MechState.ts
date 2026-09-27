@@ -1,0 +1,4 @@
+export enum MechState {
+  GROUND = 'GROUND', AIR = 'AIR', ASCEND_BOOST = 'ASCEND_BOOST',
+  QUICK_BOOST = 'QUICK_BOOST', FALLING = 'FALLING',
+}

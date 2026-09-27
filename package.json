@@ -1,0 +1,23 @@
+{
+  "name": "vector-mech-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc -p tsconfig.test.json && node --test .test-build/tests/*.test.js",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@babylonjs/core": "9.28.0",
+    "@babylonjs/havok": "^1.3.10",
+    "@babylonjs/loaders": "9.28.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3",
+    "vite": "8.3.1"
+  }
+}
