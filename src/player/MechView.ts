@@ -22,6 +22,7 @@ export class MechView {
   private mount?: TransformNode;
   private engines: TransformNode[] = [];
   private readonly inverse = Matrix.Identity();
+  get weaponAnchor(): TransformNode { return this.mount ?? this.root; }
   private constructor(scene: Scene) { this.root = new TransformNode('armored-warrior', scene); }
   static async create(scene: Scene): Promise<MechView> {
     const view = new MechView(scene);

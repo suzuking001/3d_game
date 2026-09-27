@@ -49,7 +49,7 @@ export class DebugHUD {
         <details><summary>全移動パラメータ</summary><p class="panel-note">simulationHz / maxFrameDelta は再起動時に適用。</p><div id="numeric-config"></div></details>
       </section>
       <div class="camera-point" aria-hidden="true"><i></i></div>
-      <div class="notice" id="notice" role="status" hidden>ENERGY LOW <span>ブーストに必要なエネルギーが不足しています</span></div>
+      <div class="notice" id="notice" role="status" hidden>ENERGY LOW <span>射撃・ブーストに必要なエネルギーが不足しています</span></div>
       <footer class="bottom-hud">
         <section class="speed-section"><div class="eyebrow">VELOCITY <span data-value="surface">GROUND</span></div><div class="speed-number"><strong data-value="speed">000</strong><span>m/s</span></div><div class="meter speed-meter"><i id="speed-bar"></i></div><div class="meter-scale"><span>0</span><span data-value="mid-speed">56</span><span data-value="max-speed">112</span></div></section>
         <section class="energy-section"><div class="eyebrow">BOOST ENERGY <span><b data-value="energy">100</b> <small>/ <span data-value="max-energy">100</span></small></span></div><div class="meter energy-meter"><i id="energy-bar"></i></div><div class="boost-status"><span class="live-dot"></span><span data-value="ready">QUICK BOOST READY</span><span class="boost-count">QB <b data-value="count">00</b></span></div><div class="altitude">ALTITUDE <b data-value="altitude">0.0</b> m</div></section>

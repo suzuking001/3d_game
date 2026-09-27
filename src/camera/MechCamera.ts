@@ -34,6 +34,7 @@ export class MechCamera {
   update(dt: number, position: Vector3, lag = 0): void {
     const c = cameraConfig;
     this.target.copyFrom(position); this.target.y += c.targetHeight;
+    this.target.addInPlace(this.right.scale(c.shoulderOffset));
     const response = c.followResponse * (1 - lag);
     Vector3.LerpToRef(this.rig, this.target, 1 - Math.exp(-response * dt), this.rig);
     const distance = c.distance * Math.cos(this.pitch);

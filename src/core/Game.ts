@@ -17,6 +17,7 @@ import { EffectManager } from '../effects/EffectManager.js';
 import { DebugHUD } from '../debug/DebugHUD.js';
 import { DebugRenderer } from '../debug/DebugRenderer.js';
 import { cameraConfig } from '../config/CameraConfig.js';
+import { BeamCombat } from '../combat/BeamCombat.js';
 
 export class Game {
   private readonly loop: GameLoop;
@@ -30,6 +31,7 @@ export class Game {
   private readonly hud: DebugHUD;
   private readonly atmosphere: Atmosphere;
   private readonly postProcessing: WorldPostProcessing;
+  private readonly combat: BeamCombat;
   private readonly renderPosition = Vector3.Zero();
   private readonly resize = () => this.manager.engine.resize();
   private constructor(private readonly manager: SceneManager, canvas: HTMLCanvasElement, view: MechView) {
@@ -42,18 +44,21 @@ export class Game {
     this.effects = new EffectManager(manager.scene, this.view.exhaust);
     this.debug = new DebugRenderer(manager.scene);
     this.hud = new DebugHUD(document.querySelector('#hud')!, manager.backend, this.debug, () => {
-      this.player.reset(); this.camera.reset(movement.position); this.input.clear();
+      this.player.reset(); this.camera.reset(movement.position); this.input.clear(); this.combat.reset();
     });
+    this.combat = new BeamCombat(manager.scene, this.view.weaponAnchor);
     this.postProcessing = new WorldPostProcessing(manager.scene, this.camera.camera);
     this.loop = new GameLoop(manager.engine, {
       input: dt => { this.input.sample(dt); this.camera.readLook(this.input.state); },
       simulate: dt => {
         const reset = this.input.state.resetPressed;
         this.player.update(dt, this.input.state, this.camera.forward, this.camera.right);
+        this.combat.simulate(dt, this.input.state, this.player.energy);
         if (reset) this.camera.reset(movement.position);
         if (this.player.quickBoost.started) {
           this.camera.effects.kick(mechConfig.quickBoostCameraShakeStrength);
           this.effects.boostStarted(movement.position);
+          this.combat.boostStarted();
         }
         if (this.player.landed) this.camera.effects.kick(cameraConfig.landingShake);
         this.input.consumeEdges();
@@ -63,10 +68,11 @@ export class Game {
         this.view.update(this.renderPosition, movement.yaw, dt, this.player);
         const qb = this.player.quickBoost, intensity = qb.active ? Math.min(1, qb.speed / mechConfig.quickBoostPeakSpeed) : 0;
         const lateral = qb.direction.x * this.camera.right.x + qb.direction.z * this.camera.right.z;
-        this.camera.effects.update(dt, mechConfig.quickBoostCameraFovKick * intensity, lateral * intensity);
+        this.camera.effects.update(dt, mechConfig.quickBoostCameraFovKick * intensity + this.combat.weapon.recoil * 1.3, lateral * intensity);
         this.camera.update(dt, this.renderPosition, mechConfig.quickBoostCameraLagStrength * intensity);
+        this.combat.render(dt, this.camera, qb.active ? 1 : this.player.boost.ascending ? .8 : 0);
         this.effects.update(dt, this.renderPosition, movement.velocity, qb.active, this.player.boost.ascending);
-        this.atmosphere.update(dt); this.postProcessing.update(intensity, dt, this.effects.thruster);
+        this.atmosphere.update(dt); this.postProcessing.update(intensity, dt, this.effects.thruster, this.combat.flashPower);
         this.debug.update(this.player, this.camera);
         this.hud.update(dt, manager.engine, this.player, this.camera, this.input.state);
         manager.scene.render();
@@ -86,7 +92,7 @@ export class Game {
   }
   start(): void { this.loop.start(); }
   dispose(): void {
-    this.loop.stop(); this.input.dispose(); this.hud.dispose(); window.removeEventListener('resize', this.resize);
+    this.loop.stop(); this.input.dispose(); this.combat.dispose(); this.hud.dispose(); window.removeEventListener('resize', this.resize);
     this.environment.dispose(); this.manager.dispose();
   }
 }

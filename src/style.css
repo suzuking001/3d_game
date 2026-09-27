@@ -60,6 +60,16 @@ summary { cursor: pointer; }
 input[type='number'] { width: 65px; background: #ffffff0c; border: 1px solid var(--line); color: var(--accent); padding: 5px; font: inherit; }
 .camera-point { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; transform: translate(-50%, -50%); border: 1px solid #ffffff80; border-radius: 50%; }
 .camera-point i { position: absolute; left: 7px; top: 7px; width: 2px; height: 2px; background: white; }
+.camera-point.target-acquired { border-color: #ffac74; box-shadow: 0 0 12px #ff8d4044; }
+.camera-point.beam-hit { border-radius: 0; transform: translate(-50%,-50%) rotate(45deg); border-color: #fff; box-shadow: 0 0 14px #70bfff; }
+.beam-hud { position: absolute; right: 36px; top: 175px; width: 300px; padding: 16px; background: #10202ad9; border-left: 2px solid #64beff; text-shadow: 0 1px 4px #000; }
+.beam-title { font-size: 10px; letter-spacing: 1.5px; color: #9bd6ff; }
+.sound-toggle { float: right; margin-top: -4px; padding: 4px; font-size: 8px; letter-spacing: 0; background: #162733; border: 1px solid #7fb0d266; }
+.beam-status { display: block; font-size: 18px; margin: 9px 0; font-weight: 500; }
+.beam-meter { height: 4px; background: #ffffff20; }.beam-meter i { display: block; height: 100%; background: #69cfff; box-shadow: 0 0 12px #65caff; }
+.beam-hud p { font-size: 9px; line-height: 1.7; margin: 9px 0 0; color: #c4dbe8; }.beam-target { font-size: 9px; margin-top: 12px; color: #ffc49a; }
+.beam-hud.charged { border-color: #dbb9ff; }.charged .beam-status { color: #e4caff; text-shadow: 0 0 16px #87adff; }
+@media (max-width: 760px) { .beam-hud { right: 24px; top: 140px; width: 240px; padding: 10px; }.beam-status { font-size: 14px; } }
 .bottom-hud { position: absolute; left: 36px; right: 36px; bottom: 28px; display: flex; align-items: flex-end; gap: 38px; text-shadow: 0 1px 4px #0008; }
 .speed-section { width: 195px; }
 .eyebrow { font-size: 10px; letter-spacing: 1.4px; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }

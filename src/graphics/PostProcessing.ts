@@ -17,6 +17,7 @@ import type { ThrusterEffect } from '../effects/ThrusterEffect.js';
 export class WorldPostProcessing {
   private motion?: MotionBlurPostProcess;
   private heat: HeatHaze;
+  private readonly pipeline: DefaultRenderingPipeline;
   constructor(scene: Scene, camera: Camera) {
     if (config.ssaoEnabled && SSAO2RenderingPipeline.IsSupported) {
       const ao = new SSAO2RenderingPipeline('contact occlusion', scene, { ssaoRatio: 0.5, blurRatio: 1 }, [camera]);
@@ -39,6 +40,7 @@ export class WorldPostProcessing {
     curves.shadowsHue = 205; curves.shadowsDensity = 10; curves.highlightsHue = 38; curves.highlightsDensity = 8;
     processing.colorCurves = curves; processing.colorCurvesEnabled = true;
     const pipeline = new DefaultRenderingPipeline('cinematic world', true, scene, [camera], false);
+    this.pipeline=pipeline;
     pipeline.samples = 4; pipeline.fxaaEnabled = true;
     pipeline.bloomEnabled = config.bloomEnabled; pipeline.bloomThreshold = 0.9;
     pipeline.bloomWeight = config.bloomWeight; pipeline.bloomKernel = 48;
@@ -56,7 +58,9 @@ export class WorldPostProcessing {
     }
     this.heat = new HeatHaze(scene, camera);
   }
-  update(boostIntensity: number, dt: number, thruster: ThrusterEffect): void {
+  update(boostIntensity: number, dt: number, thruster: ThrusterEffect, weaponFlash=0): void {
+    this.pipeline.bloomWeight=config.bloomWeight+weaponFlash*.6;
+    this.pipeline.chromaticAberration.aberrationAmount=config.chromaticAberration+weaponFlash*3;
     if (this.motion) this.motion.motionStrength = boostIntensity * 0.12;
     this.heat.update(dt,thruster);
   }
