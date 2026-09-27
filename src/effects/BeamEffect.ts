@@ -59,6 +59,7 @@ export class BeamEffect {
     this.chargeOrb=make(MeshBuilder.CreatePlane('beam charging singularity',{size:1},scene),soft);this.chargeOrb.billboardMode=Mesh.BILLBOARDMODE_ALL;
     this.chargeRing=make(MeshBuilder.CreateTorus('beam charging induction vortex',{diameter:1,thickness:.025,tessellation:48},scene),shock);
     this.light=new PointLight('beam plasma bounce',Vector3.Zero(),scene);this.light.diffuse.set(.22,.55,1);this.light.range=14;this.light.intensity=0;
+    this.light.setEnabled(false);
     this.light.renderPriority=1; // Keep transient illumination inside the existing eight-light PBR budget.
   }
   trigger(from:Vector3,to:Vector3,normal:Vector3,shot:BeamShot,impact:boolean,killed:boolean):void {
@@ -80,6 +81,7 @@ export class BeamEffect {
     b.power+=killed?1:0;
     if(impact) {(b.sparks.emitter as Vector3).copyFrom(to);b.sparks.manualEmitCount=Math.round((new URLSearchParams(location.search).get('quality')==='low'?18:36)*b.power);}
     this.light.position.copyFrom(impact?to:from);this.lightLife=.4;this.light.intensity=7*shot.power;
+    this.light.setEnabled(true);
     this.flashPower=Math.min(1,shot.power*.3);
     this.animate(b);
   }
@@ -104,6 +106,7 @@ export class BeamEffect {
     this.lightLife=Math.max(0,this.lightLife-dt);
     if(charge>.01){this.light.position.copyFrom(muzzle);this.light.intensity=charge*5;}else this.light.intensity*=Math.exp(-dt*16);
     if(!this.lightLife&&charge<=.01)this.light.intensity=0;
+    this.light.setEnabled(this.light.intensity>.015);
   }
   reset():void {for(const b of this.bursts){b.life=0;b.sparks.reset();}this.lightLife=this.flashPower=0;}
 }

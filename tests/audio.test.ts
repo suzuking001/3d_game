@@ -27,3 +27,11 @@ test('Audio: continuous engine loop has no discontinuity at its seam',()=>{
   assert.ok(Math.abs(pcm[0]-pcm[pcm.length-1])<.015);
   assert.ok(pcm.every(Number.isFinite));assert.ok(rms(pcm)>.1);assert.ok(rms(pcm)<.4);
 });
+test('Audio: armor impact and collapse remain bounded and fade to silence',()=>{
+  for(const kind of ['armorHit','armorBreak'] as const) {
+    const pcm=synthesizeDischarge(kind,2,48000);
+    assert.ok(pcm.every(x=>Number.isFinite(x)&&Math.abs(x)<=.851));
+    assert.ok(rms(pcm.slice(0,4800))>.05);
+    assert.ok(rms(pcm.slice(-1920))<rms(pcm.slice(0,4800))*.25);
+  }
+});

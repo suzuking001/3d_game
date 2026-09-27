@@ -39,6 +39,7 @@ export class BeamCombat {
   }
   reset():void {this.weapon.reset();this.targets.reset();this.pending.length=0;this.effect.reset();this.hitTime=0;this.boostQueued=false;}
   boostStarted():void {this.boostQueued=true;}
+  armorHit(broken:boolean):void {this.audio.armorHit(broken);}
   render(dt:number,camera:MechCamera,thrust=0):void {
     camera.camera.getViewMatrix(true);
     const ray=camera.camera.getForwardRay(300),aim=this.scene.pickWithRay(ray,beamPickable);

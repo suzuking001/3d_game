@@ -16,7 +16,7 @@
 | effects | EffectManager / ThrusterEffect / QuickBoostEffect | 固定プールの軌跡、排気・ショックウェーブ |
 | debug | DebugHUD / DebugRenderer | 全必須計測項目、Config調整、7種類の3Dベクトル |
 | config | MechConfig / CameraConfig / GraphicsConfig | 移動・カメラ・描画の集約設定 |
-| combat | TargetingSystem / WeaponSystem / ProjectileSystem | Phase 2向けインターフェースのみ、未実装 |
+| combat | BeamCombat / WeaponSystem / ArmorCombat / EnergyArmor / IncomingFire | 通常・チャージ射撃、ドローン迎撃、装甲吸収・崩壊・回復、本体AP |
 
 ```mermaid
 flowchart TD
@@ -133,7 +133,9 @@ Phase 1の軸平行ボックスに限定した連続衝突。機体は半径×�
 
 MechConfigに移動・QB・Energy・衝突・入力、CameraConfigに視点・演出、GraphicsConfigに環境・描画品質・エフェクトプールを集約する。Developer UIは同じ設定オブジェクトを変更する。速度、加速時間、慣性、空中制御、カメラ遅延、FOVは再起動なしで反映する。シミュレーションHzと最大蓄積時間はTimeManager生成時の設定で、再起動が必要。
 
-Effectsはイベントと移動結果を参照するだけ。軌跡は起動時に確保した40個のMeshを循環利用する。移動計算の作業Vectorは再利用する。HUDは約12.5Hzで更新する。戦闘クラスとExplosionEffectは接続インターフェースのみを用意し、Phase 1では武器・AI・ダメージ等を実装しない。
+Effectsはイベントと移動結果を参照する。ビームのバーストは4組、迎撃弾は12個を起動時に確保して循環利用する。移動計算の作業Vectorは再利用する。移動HUDは約12.5Hzで更新する。
+
+射撃の照準はカメラからのレイで求め、砲口から再度レイを飛ばして手前の遮蔽物を確認する。迎撃弾は発射時に静的な遮蔽物までの距離を記録し、固定ステップごとに弾と機体の相対移動の線分を装甲の楕円体と交差判定する。装甲の状態・ダメージ・再生はEnergyArmor、描画はEnergyArmorEffectに分離している。膜のシェーダーと屈折処理はGLSL・WGSLの両方を用意し、屈折は深度で手前の物体を除外する。
 
 ## 実装順
 

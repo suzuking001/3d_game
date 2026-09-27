@@ -65,6 +65,13 @@ input[type='number'] { width: 65px; background: #ffffff0c; border: 1px solid var
 .beam-hud { position: absolute; right: 36px; top: 175px; width: 300px; padding: 16px; background: #10202ad9; border-left: 2px solid #64beff; text-shadow: 0 1px 4px #000; }
 .beam-title { font-size: 10px; letter-spacing: 1.5px; color: #9bd6ff; }
 .sound-toggle { float: right; margin-top: -4px; padding: 4px; font-size: 8px; letter-spacing: 0; background: #162733; border: 1px solid #7fb0d266; }
+.armor-hud { position: absolute; left: 36px; bottom: 230px; width: 290px; padding: 14px 16px; background: #10231fe0; border-left: 2px solid #7ce6c8; text-shadow: 0 1px 4px #000; }
+.armor-heading { font-size: 10px; letter-spacing: 1px; color: #adf7df; }.incoming-toggle { float: right; margin-top: -4px; font-size: 9px; padding: 4px 7px; background: #182d27; border: 1px solid #76bb9f66; }
+.armor-readout { display: flex; justify-content: space-between; align-items: baseline; margin: 12px 0 10px; }.armor-state { font-weight: 500; font-size: 13px; }.armor-capacity { color: #adf7df; font-size: 10px; }
+.armor-meter { background: #ffffff20; height: 5px; }.armor-meter i { display: block; height: 100%; background: #7ce6c8; box-shadow: 0 0 10px #59cbb970; transition: width .08s linear; }
+.armor-hull { margin-top: 12px; font-size: 10px; color: #bbd8cf; }.armor-hull b { color: white; font-size: 20px; margin: 0 8px; font-weight: 500; }.armor-hud p { margin: 10px 0 0; font-size: 8px; color: #bdcfc8; }
+.armor-hud.collapsed { border-color: #ffa777; }.collapsed .armor-state,.critical .armor-hull b { color: #ffad83; }.collapsed .armor-meter i { background: #ffad83; }
+@media (max-width: 760px) { .armor-hud { left: 24px; bottom: 195px; width: 240px; padding: 10px; } }
 .beam-status { display: block; font-size: 18px; margin: 9px 0; font-weight: 500; }
 .beam-meter { height: 4px; background: #ffffff20; }.beam-meter i { display: block; height: 100%; background: #69cfff; box-shadow: 0 0 12px #65caff; }
 .beam-hud p { font-size: 9px; line-height: 1.7; margin: 9px 0 0; color: #c4dbe8; }.beam-target { font-size: 9px; margin-top: 12px; color: #ffc49a; }

@@ -48,10 +48,13 @@ export class GameAudio {
     const ctx=this.context;if(!ctx||ctx.state!=='running'||this.muted)return;
     const level=Math.round(Math.max(1,Math.min(4,power))*4)/4,key=`${kind}:${level}`;
     let buffer=this.buffers.get(key);if(!buffer){buffer=this.buffer(synthesizeDischarge(kind,level,ctx.sampleRate));this.buffers.set(key,buffer);}
-    const source=ctx.createBufferSource();source.buffer=buffer;source.connect(this.bus!);source.start();source.onended=()=>source.disconnect();
+    const source=ctx.createBufferSource();source.buffer=buffer;
+    const gain=ctx.createGain();gain.gain.value=kind==='armorHit'?.35:kind==='armorBreak'?.8:1;
+    source.connect(gain).connect(this.bus!);source.start();source.onended=()=>{source.disconnect();gain.disconnect();};
   }
   fire(power:number):void {this.play('beam',power);}
   boostBurst():void {this.play('quickBoost',1);}
+  armorHit(broken:boolean):void {this.play(broken?'armorBreak':'armorHit',broken?2:1);}
   toggleMute():boolean {
     this.muted=!this.muted;if(this.context)this.master!.gain.setTargetAtTime(this.muted?0:.65,this.context.currentTime,.025);return this.muted;
   }

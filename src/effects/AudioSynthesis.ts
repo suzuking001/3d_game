@@ -1,8 +1,9 @@
-export type DischargeSound='beam'|'quickBoost';
+export type DischargeSound='beam'|'quickBoost'|'armorHit'|'armorBreak';
 /** Deterministic original PCM: sub bass, resonant metal, filtered pressure noise and an electrical tail. */
 export function synthesizeDischarge(kind:DischargeSound,power:number,sampleRate:number):Float32Array {
   const strength=Math.max(1,Math.min(4,power)),beam=kind==='beam';
-  const duration=beam?.55+strength*.16:.9,pcm=new Float32Array(Math.ceil(duration*sampleRate));
+  const armor=kind==='armorHit'||kind==='armorBreak';
+  const duration=beam?.55+strength*.16:armor?(kind==='armorBreak'?.85:.4):.9,pcm=new Float32Array(Math.ceil(duration*sampleRate));
   let seed=0x1571af,low=0,mid=0,phase=0,electricPhase=0;
   const lowAlpha=1-Math.exp(-2*Math.PI*180/sampleRate),midAlpha=1-Math.exp(-2*Math.PI*(beam?2200:1200)/sampleRate);
   for(let i=0;i<pcm.length;i++) {
@@ -15,7 +16,8 @@ export function synthesizeDischarge(kind:DischargeSound,power:number,sampleRate:
     const pressure=low*Math.exp(-t*4)*2.5+mid*Math.exp(-t*(beam?10:7))*.55;
     const metal=(Math.sin(t*2*Math.PI*143)+Math.sin(t*2*Math.PI*227)*.55)*Math.exp(-t*22)*.15;
     const electric=Math.sin(electricPhase)*Math.exp(-t*9)*(beam?.12:.04);
-    const dry=(bass+pressure+metal+electric)*attack;
+    const corona=armor?(Math.sin(t*2*Math.PI*1127)+Math.sin(t*2*Math.PI*1741)*.4)*Math.exp(-t*16)*.13:0;
+    const dry=(bass*(armor?.45:1)+pressure+metal+electric+corona)*attack;
     // Sparse reflections give the blast a sense of scale without masking the low-frequency impact.
     const echo=i>sampleRate*.095?pcm[i-Math.round(sampleRate*.095)]*.17:0;
     const tail=Math.min(1,(duration-t)/.04);
